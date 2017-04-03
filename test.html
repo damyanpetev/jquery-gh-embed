@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>Embed demo</title>
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="src/jq-gh-embed.css">
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+
+    <script src="src/jq-gh-embed.js"></script>
+  </head>
+  <body>
+    <div class="embed-sample">
+        <a href="https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats" title="https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats" target="_blank">https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats</a>
+    </div>
+  </body>
+  <script>
+    $(".embed-sample").jqGhEmbed({ embed: [{ test: 1}]});
+  </script>
+</html>
