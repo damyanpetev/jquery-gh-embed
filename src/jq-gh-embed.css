@@ -72,6 +72,37 @@
     background: url(../images/JSFiddle-img.png) no-repeat 10px center #0083db;
 }
 
+/* Copy */
+.codeViewerSelectAll {
+    position: absolute;
+    display: inline-block;
+    left: 100%;
+    padding: 5px;
+    top: 0;
+    margin-top: 60px;
+    margin-left: -170px;
+    width: 130px;
+    background-color: #e0e0e0;
+    border: 1px solid #c0c0c0;
+    color: #707070;
+    cursor: pointer;
+    text-align: center;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+.codeViewerSelectAll:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
 /* tabs */
 .ui-tabs .ui-tabs-nav {
   background-color: #282828;

@@ -7,8 +7,8 @@
 * highlight.js
 */
 
-/*global window*/
-(function ($) {
+/*global document, jQuery, hljs*/
+(function ($, hljs) {
 	$.widget("ui.jqGhEmbed", {
 		options: {
 			/* type="string" Default height */
@@ -40,7 +40,10 @@
 		},
 		locale: {
 			fiddleEN: "Show In JsFiddle",
-			fiddleJA: "JsFiddle で表示"
+			fiddleJA: "JsFiddle で表示",
+			copyAllEN: "Copy to Clipboard",
+			copyAllJA: "クリップボードへコピー"
+
 		},
 		css: {
 			/* Classes applied to the loader shown while loading */
@@ -48,7 +51,11 @@
 			container: "ui-tabs",
 			tabHeader: "ui-tabs-nav",
 			/* Applied to the tabs panel container when content has been loaded */
-			contentLoaded: "content-loaded"
+			contentLoaded: "content-loaded",
+			/* Class applied to the JSFiddle button */
+			jsFiddle: "JSFiddle",
+			/* Class applied to the copy button */
+			copyAllButton: "codeViewerSelectAll"
 		},
 		_ghAPI: "", //"https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}",
 		_ghRawAPI: "https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}",
@@ -87,6 +94,7 @@
 		_render: function () {
 			var html = "", self = this;
 			html += this._fiddleHtml();
+			html += this._copyHtml();
 			html += this._createTabs();
 			this.element.html(html);
 			this.loader = $(this._loaderHtml(true));
@@ -97,14 +105,19 @@
 				}
 			});
 			this.activateTab(0);
+			this._attachEvents();
 		},
 		_loaderHtml: function name(hidden) {
 			return "<div class='" + this.css.loaderClass +
 						(hidden? " hidden" : "") + "'></div>";
 		},
-		_fiddleHtml: function (params) {
+		_fiddleHtml: function () {
 			var text = this.options.remoteUrl.indexOf("EN/") > 0 ? this.locale.fiddleEN : this.locale.fiddleJA;
-			return "<div class='JSFiddle'><a href='" + this._getUrl(this.options.remoteUrl, "fiddle") + "'target='_blank'>" + text + "</a></div>";
+			return "<div class='" + this.css.jsFiddle + "'><a href='" + this._getUrl(this.options.remoteUrl, "fiddle") + "'target='_blank'>" + text + "</a></div>";
+		},
+		_copyHtml: function () {
+			var text = this.options.remoteUrl.indexOf("EN/") > 0 ? this.locale.copyAllEN : this.locale.copyAllJA;
+			return "<span class='" + this.css.copyAllButton + "'>" + text + "</span>";
 		},
 		_createTabs: function () {
 			var tab, tabId, mainHeader = "<ul class='" + this.css.tabHeader + "' >", tabs = "";
@@ -118,6 +131,37 @@
 			mainHeader += "</ul>"
 
 			return mainHeader + tabs;
+		},
+		_attachEvents: function (params) {
+			var self = this;
+			this.copyButton = this.element.children("." + this.css.copyAllButton);
+			this.copyButton.on("click", $.proxy(this._selectAll, this));
+			this.element.on("keydown", function (e) {
+				if (e.ctrlKey) {
+					if (e.keyCode == 65 || e.keyCode == 97) { // 'A' or 'a'
+						e.preventDefault();
+						self._selectAll(true);
+					}
+				}
+			})
+		},
+		_selectAll: function (skipCopy) {
+			var range;
+			this.activePanel
+			if (document.createRange) {
+				range = document.createRange(), selection = document.getSelection();
+				range.selectNodeContents(this.activePanel[0]);
+				selection.removeAllRanges();
+				selection.addRange(range);
+			}
+			else if (document.body.createTextRange) {
+				range = document.body.createTextRange();
+				range.moveToElementText(this.activePanel[0]);
+				range.select();
+			}
+			if (!skipCopy) {
+				document.execCommand("copy");
+			}
 		},
 		_parsePath: function (path) {
 			path = path.replace(/^\//, "").split("/");
@@ -157,10 +201,10 @@
 			});
 			return result;
 		},
-		_getUrl(path, type) {
+		_getUrl: function (path, reqType) {
 			var url, settings = ["owner", "repo", "ref"];
 
-			switch (type) {
+			switch (reqType) {
 				case "fiddle":
 					url = this._fiddleUrl;
 					break;
@@ -178,42 +222,41 @@
 			url = url.replace("${path}", path);
 			return url;
 		},
-		_loadTabContent(tabPanel, tab) {
+		_loadTabContent: function (tab) {
 			var self = this;
 			self.loader.show();
 			if (tab.type === "htmlpage") {
-				var frame = $("<iframe>", { src: tab.url }).appendTo(tabPanel);
+				var frame = $("<iframe>", { src: tab.url }).appendTo(this.activePanel);
 				frame.one("load", function() {
 					self.loader.fadeOut();
 				});
-				tabPanel.addClass(this.css.contentLoaded);
+				this.activePanel.addClass(this.css.contentLoaded);
 			} else {
 				//ajax load:
 				this._getGhFile(tab.path)
 				.done(function(data) {
-					var code = $("<code>").appendTo(tabPanel);
+					var code = $("<code>").appendTo(self.activePanel);
 					code.wrap("<pre>");
 					code.text(data);
 					hljs.highlightBlock(code[0]);
 				})
 				.fail(function() {
-					tabPanel.html("Failed to grab content");
+					self.activePanel.html("Failed to grab content");
 				})
 				.always(function() {
-					tabPanel.addClass(self.css.contentLoaded);
+					self.activePanel.addClass(self.css.contentLoaded);
 					self.loader.fadeOut();
 				});
 			}
 			
 		},
 		activateTab: function (index) {
-			var tab = this.options.embed[ index ],
-				tabPanel;
+			var tab = this.options.embed[ index ];
 			if (tab) {
 				this.element.tabs("option", "active", index);
-				tabPanel = this.element.find("#" + tab.label);
-				if (!tabPanel.hasClass(this.css.contentLoaded)) {
-					this._loadTabContent(tabPanel, tab);
+				this.activePanel = this.element.find("#" + tab.label);
+				if (!this.activePanel.hasClass(this.css.contentLoaded)) {
+					this._loadTabContent(tab);
 				} else {
 					this.loader.hide();
 				}
@@ -226,4 +269,4 @@
 			//this.element.children("")
 		}
 	});
-})(jQuery);
+})(jQuery, hljs);
