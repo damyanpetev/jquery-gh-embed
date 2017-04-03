@@ -38,6 +38,10 @@
 				type: null
 			}]
 		},
+		locale: {
+			fiddleEN: "Show In JsFiddle",
+			fiddleJA: "JsFiddle で表示"
+		},
 		css: {
 			/* Classes applied to the loader shown while loading */
 			loaderClass: "loader",
@@ -48,6 +52,7 @@
 		},
 		_ghAPI: "", //"https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}",
 		_ghRawAPI: "https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}",
+		_fiddleUrl: "https://jsfiddle.net/gh/get/jquery/1.9.1/${owner}/${repo}/tree/${ref}/${path}/fiddle",
 		_create: function () {
 			var link;
 			this.element.css("height", this.options.height);
@@ -70,7 +75,7 @@
 		},
 		_remoteInit: function () {
 			var self = this;
-			this._getGhFile(this.options.remoteUrl)
+			this._getGhFile(this.options.remoteUrl + "/.gh-embed.json")
 				.done(function(data) {
 					self.options = $.extend(self.options, JSON.parse(data));
 					self._render();
@@ -81,6 +86,7 @@
 		},
 		_render: function () {
 			var html = "", self = this;
+			html += this._fiddleHtml();
 			html += this._createTabs();
 			this.element.html(html);
 			this.loader = $(this._loaderHtml(true));
@@ -95,6 +101,10 @@
 		_loaderHtml: function name(hidden) {
 			return "<div class='" + this.css.loaderClass +
 						(hidden? " hidden" : "") + "'></div>";
+		},
+		_fiddleHtml: function (params) {
+			var text = this.options.remoteUrl.indexOf("EN/") > 0 ? this.locale.fiddleEN : this.locale.fiddleJA;
+			return "<div class='JSFiddle'><a href='" + this._getUrl(this.options.remoteUrl, "fiddle") + "'target='_blank'>" + text + "</a></div>";
 		},
 		_createTabs: function () {
 			var tab, tabId, mainHeader = "<ul class='" + this.css.tabHeader + "' >", tabs = "";
@@ -114,7 +124,7 @@
 			this.options.owner = path[0];
 			this.options.repo = path[1];
 			this.options.ref = path[3];
-			this.options.remoteUrl = path.slice(4).join("/") + "/.gh-embed.json";
+			this.options.remoteUrl = path.slice(4).join("/");
 		},
 		/**
 		 * Get file contents with fallback
@@ -133,7 +143,7 @@
 			.then(null, function() {
 				 // fail filter, try raw:
 				 return $.get({
-					url: self._getUrl(path, true),
+					url: self._getUrl(path, "raw"),
 					headers: {
 						Accept: 'application/vnd.github.VERSION.raw'
 					}
@@ -147,10 +157,20 @@
 			});
 			return result;
 		},
-		_getUrl(path, raw) {
-			var url = raw ? this._ghRawAPI : this._ghAPI,
-				settings = ["owner", "repo", "ref"];
+		_getUrl(path, type) {
+			var url, settings = ["owner", "repo", "ref"];
 
+			switch (type) {
+				case "fiddle":
+					url = this._fiddleUrl;
+					break;
+				case "raw":
+					url = this._ghRawAPI;
+					break;
+				default:
+					url = this._ghAPI;
+					break;
+			}
 			for (var i = 0; i < settings.length; i++) {
 				url = url.replace("${" + settings[i] + "}", this.options[ settings[i] ]) ;
 				

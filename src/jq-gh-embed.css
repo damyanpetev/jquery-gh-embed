@@ -54,6 +54,24 @@
     100% { transform: rotate(360deg); }
 }
 
+/* JSFIddle */
+
+.JSFiddle a {
+    background: url(../images/JSFiddle-img.png) no-repeat 10px center #09f;
+    color: #fff;
+    border: none;
+    padding: 0 10px 0 50px;
+    position: relative;
+    float: right;
+    line-height: 40px;
+    font-size: 16px;
+}
+
+.JSFiddle a:hover {
+    text-decoration: none;
+    background: url(../images/JSFiddle-img.png) no-repeat 10px center #0083db;
+}
+
 /* tabs */
 .ui-tabs .ui-tabs-nav {
   background-color: #282828;
