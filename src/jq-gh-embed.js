@@ -42,8 +42,11 @@
 			fiddleEN: "Show In JsFiddle",
 			fiddleJA: "JsFiddle で表示",
 			copyAllEN: "Copy to Clipboard",
-			copyAllJA: "クリップボードへコピー"
-
+			copyAllJA: "クリップボードへコピー",
+			errorInitEN: "Something went wrong..",
+			errorInitJA:  "Something went wrong..",
+			errorContentEN: "Failed to get file contents",
+			errorInitJA: "Failed to get file contents"
 		},
 		css: {
 			/* Classes applied to the loader shown while loading */
@@ -126,24 +129,24 @@
 				tab = this.options.embed[i];
 				tabId = tab.label || "tab-" + (i+1);
 				mainHeader += "<li><a href='#" + tabId + "'>" + tab.label + "</a></li>";
-				tabs += "<div id='" + tabId + "'></div>";
+				tabs += "<div id='" + tabId + "' tabindex='0'></div>";
 			}
 			mainHeader += "</ul>"
 
 			return mainHeader + tabs;
 		},
-		_attachEvents: function (params) {
+		_attachEvents: function () {
 			var self = this;
 			this.copyButton = this.element.children("." + this.css.copyAllButton);
 			this.copyButton.on("click", $.proxy(this._selectAll, this));
-			this.element.on("keydown", function (e) {
+			this.element.on("keydown", ".ui-tabs-panel", function (e) {
 				if (e.ctrlKey) {
 					if (e.keyCode == 65 || e.keyCode == 97) { // 'A' or 'a'
 						e.preventDefault();
 						self._selectAll(true);
 					}
 				}
-			})
+			});
 		},
 		_selectAll: function (skipCopy) {
 			var range;
@@ -201,10 +204,10 @@
 			});
 			return result;
 		},
-		_getUrl: function (path, reqType) {
+		_getUrl: function (path, type) {
 			var url, settings = ["owner", "repo", "ref"];
 
-			switch (reqType) {
+			switch (type) {
 				case "fiddle":
 					url = this._fiddleUrl;
 					break;

@@ -12,6 +12,11 @@
     padding: 0;
 }
 
+.ui-tabs .ui-tabs-panel:focus {
+    outline: none;
+    border-color: #0099ff;
+}
+
 .ui-tabs .ui-tabs-panel pre {
     margin: 0;
     height: 100%;
