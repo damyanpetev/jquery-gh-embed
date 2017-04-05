@@ -12,20 +12,22 @@
 
 /*global document, jQuery, hljs*/
 (function ($, hljs) {
-	$.widget("ui.jqGhEmbed", {
+	$.widget("ui.ghEmbed", {
 		options: {
 			/* type="string" Default height of the widget */
 			height: "500px",
-			/* type="string" Url for GitHUb tree folder to download JSON config containing options from. Exclisive with the embed array option. */
+			/* type="string" Url for GitHub folder path to download JSON config containing options from. Exclisive with the embed array option. */
 			remoteUrl: null,
+			/* type="string" Default file name for json configuration under the remoteUrl. */
+			remoteConfigName: ".gh-embed.json",
 			/* Repository name */
 			repo: null,
 			/* Repository owner name (user, organization) */
 			owner: null,
-			/* Type of the path */ 
-			type: null,
-			/* Pattern applied to the source repo */
-			sourceRepoPattern: "{0}-src",
+			/* Pattern for the source link. Can contain placoholders for the repo, owner and ref. GitHub main url can be omitted.  */
+			srcUrlPattern: "https://github.com/${owner}/${repo}/tree/${ref}",
+			/* Relative path in the repository tree to build fiddle link with. Parsed from remoteUrl if set or provided via link element */
+			relativePath: null,
 			/* Relative path to the fiddle folder. Leave empty to skip. */
 			fiddleFolder: "/fiddle",
 			/* Git reference such as a branch name, tag or commit SHA */
@@ -54,45 +56,55 @@
 			}]
 		},
 		locale: {
-			fiddleEN: "Show In JsFiddle",
-			fiddleJA: "JsFiddle で表示",
-			copyAllEN: "Copy to Clipboard",
-			copyAllJA: "クリップボードへコピー",
-			errorInitEN: "Something went wrong..",
-			errorInitJA:  "Something went wrong..",
-			errorContentEN: "Failed to get file contents",
-			errorInitJA: "Failed to get file contents"
+			fiddle: "Show In JsFiddle",
+			gitHubLink: "On GitHub",
+			copyAll: "Copy to Clipboard",
+			errorInit: "Something went wrong..",
+			errorContent: "An error has occurred while retrieving data.",
 		},
 		css: {
 			/* Classes applied to the loader element */
 			loaderClass: "loader",
-			/* Class applied to to the main element in advance of creating tabs for intiail layout */
-			container: "ui-tabs",
+			/* Class applied to to the main element. Tabs class added in advance of creating them for intiail layout */
+			container: "ui-tabs ui-ghembed ui-widget",
 			/* Class applied to the tabs panel container when content has been loaded */
 			contentLoaded: "content-loaded",
 			/* Class applied to the JSFiddle button */
 			jsFiddle: "JSFiddle",
+			/* Class applied to the source container element */
+			gitHubLinkContainer: "github-link-container",
+			/* Class applied to the source link */
+			gitHubLink: "github-link",
 			/* Class applied to the copy button */
 			copyAllButton: "codeViewerSelectAll"
 		},
 		_ghAPI: "", //"https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}",
 		_ghRawAPI: "https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}",
 		_fiddleUrl: "https://jsfiddle.net/gh/get/jquery/1.9.1/${owner}/${repo}/tree/${ref}/${path}",
+		_createWidget: function () {
+			// clear out doc embed before options are applied
+			this.options.embed = [];			
+			$.Widget.prototype._createWidget.apply(this, arguments);
+		},
 		_create: function () {
 			var link;
 			this.element.css("height", this.options.height);
 			this.element.addClass(this.css.container);
 
-			//find embed link:
-			link = this.element.children("a")[0];
-			if (link && !this.options.remoteUrl && link.hostname === "github.com") {
-				this._parsePath(link.pathname);
+			if (!this.options.remoteUrl && !this.options.embed.length) {
+				//find embed link:
+				link = this.element.children("a")[0];
+				if (link && link.hostname === "github.com") {
+					this.options.remoteUrl = link.href;
+				}
 			}
+			
 			// show loader
 			this.$loader = $(this._loaderHtml());
 			this.$loader.appendTo(this.element);
 
         	if (this.options.remoteUrl) {
+				this._parsePath(this.options.remoteUrl.split("github.com/").pop());
 				this._remoteInit();
 			} else {
 				this._render();
@@ -100,7 +112,7 @@
 		},
 		_remoteInit: function () {
 			var self = this;
-			this._getGhFile(this.options.remoteUrl + "/.gh-embed.json")
+			this._getGhFile(this.options.relativePath + "/" + this.options.remoteConfigName)
 				.done(function(data) {
 					self.options = $.extend(self.options, JSON.parse(data));
 					self._render();
@@ -111,14 +123,18 @@
 		},
 		_render: function () {
 			var html = "", self = this;
+			if (!this.options.repo || !this.options.owner) {
+				
+			}
 			html += this._fiddleHtml();
 			html += this._copyHtml();
 			html += this._createTabs();
+			html += this._sourceLinkHtml();
 			html += this._loaderHtml(true);
 			this.element.html(html);
-
 			this.$loader = this.element.children("." + this.css.loaderClass);
 			this.$copyAllButton = this.element.children("." + this.css.copyAllButton);
+
 			this.element.tabs({
 				activate: function( ev, ui ) {
 					self.activateTab(self.element.tabs( "option", "active" ));
@@ -133,14 +149,22 @@
 		},
 		_fiddleHtml: function () {
 			var result = "", 
-				text = this.options.remoteUrl.indexOf("EN/") > 0 ? this.locale.fiddleEN : this.locale.fiddleJA;
-			if (this.options.fiddleFolder) {
-				result = "<div class='" + this.css.jsFiddle + "'><a href='" + this._getUrl(this.options.remoteUrl + this.options.fiddleFolder, "fiddle") + "'target='_blank'>" + text + "</a></div>";
+				text = this.locale.fiddle;
+			if (this.options.relativePath) {
+				result = "<div class='" + this.css.jsFiddle + "'><a href='" + this._getUrl(this.options.relativePath + this.options.fiddleFolder, "fiddle") + "'target='_blank'>" + text + "</a></div>";
+			}
+			return result;
+		},
+		_sourceLinkHtml: function () {
+			var result = "",
+				text = this.locale.gitHubLink;
+			if (this.options.srcUrlPattern) {
+				result = "<div class='" + this.css.gitHubLinkContainer  + "'><a href='" + this._getUrl("", "src") + "'target='_blank' class='" + this.css.gitHubLink  + "'>" + text + "</a></div>";
 			}
 			return result;
 		},
 		_copyHtml: function () {
-			var text = this.options.remoteUrl.indexOf("EN/") > 0 ? this.locale.copyAllEN : this.locale.copyAllJA;
+			var text = this.locale.copyAll;
 			return "<span class='" + this.css.copyAllButton + "'>" + text + "</span>";
 		},
 		_createTabs: function () {
@@ -193,7 +217,7 @@
 			this.options.owner = path[0];
 			this.options.repo = path[1];
 			this.options.ref = path[3];
-			this.options.remoteUrl = path.slice(4).join("/");
+			this.options.relativePath = path.slice(4).join("/");
 		},
 		/**
 		 * Get file contents with fallback
@@ -236,6 +260,12 @@
 				case "raw":
 					url = this._ghRawAPI;
 					break;
+				case "src":
+					url = this.options.srcUrlPattern;
+					if (url.indexOf("https://github.com") != 0) {
+						url = "https://github.com" + url;
+					}
+					break;
 				default:
 					url = this._ghAPI;
 					break;
@@ -245,6 +275,7 @@
 				
 			}
 			url = url.replace("${path}", path);
+			console.log(url);
 			return url;
 		},
 		_loadTabContent: function (tab) {

@@ -1,21 +1,54 @@
 <html>
-  <head>
-    <title>Embed demo</title>
-    <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="src/jq-gh-embed.css">
-    <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
 
-    <script src="src/jq-gh-embed.js"></script>
-  </head>
-  <body>
-    <div class="embed-sample">
-        <a href="https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats" title="https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats" target="_blank">https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats</a>
-    </div>
-  </body>
-  <script>
-    $(".embed-sample").jqGhEmbed({ embed: [{ test: 1}]});
-  </script>
+<head>
+  <meta charset="utf-8">
+  <title>Embed demo</title>
+  <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" href="src/jq-gh-embed.css">
+  <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="bower_components/jquery-ui/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js"></script>
+
+  <script src="src/jq-gh-embed.js"></script>
+  <!--<script src="src/locales/jq-gh-embed-ja.js"></script>-->
+</head>
+
+<body>
+  <div class="embed-sample">
+    <a href="https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats" title="https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats"
+      target="_blank">https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/date-and-time-formats</a>
+  </div>
+  <div> </div>
+</body>
+<script>
+  // init on link 
+  $(".embed-sample").ghEmbed();
+  $("<div>").appendTo("body").ghEmbed({
+      owner: "IgniteUI",
+      relativePath: "16.2/EN/combo/xml-binding",
+      repo: "help-samples",
+      ref: "master",
+      "srcUrlPattern": "/${owner}/${repo}-src/blob/16.2/HTMLSamples/combo/xml-binding.html",
+      "embed": [
+          {
+              "label": "JS",
+              "path": "16.2/EN/combo/xml-binding/fiddle/demo.js"
+          },
+          {
+              "label": "HTML",
+              "path": "16.2/EN/combo/xml-binding/fiddle/demo.html"
+          },
+          {
+              "type": "htmlpage",
+              "label": "Result",
+              "url": "https://igniteui.github.io/help-samples/16.2/EN/combo/xml-binding/index.html"
+          }
+      ]
+  });
+  $("<div>").appendTo("body").ghEmbed({
+      remoteUrl: "https://github.com/IgniteUI/help-samples/tree/master/16.2/EN/editors/localizing-editors"
+  });
+</script>
+
 </html>

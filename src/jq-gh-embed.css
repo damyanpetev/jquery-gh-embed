@@ -1,14 +1,28 @@
-.ui-widget.ui-widget-content.ui-tabs {
+.ui-widget.ui-ghembed.ui-tabs {
     position: relative;
+    box-sizing: border-box;
     padding: 0;
+    padding-bottom: 1em;
     border: none;
     width: 100%;
 }
 
+.ui-widget.ui-ghembed .github-link-container {
+    text-align: right;
+}
+
+.ui-widget.ui-ghembed .github-link {
+    position: relative;
+    padding: 0 1em;
+    border: none;
+    width: 100%;
+}
+
+
 .ui-tabs .ui-tabs-panel {
     border: 1px solid #eee;
     background: none;
-    height: 100%;
+    height: calc(100% - 40px - 1.1em);
     padding: 0;
 }
 
