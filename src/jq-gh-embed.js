@@ -67,6 +67,8 @@
 			loaderClass: "loader",
 			/* Class applied to to the main element. Tabs class added in advance of creating them for intiail layout */
 			container: "ui-tabs ui-ghembed ui-widget",
+			/* Class applied to error messages */
+			errorText: "ui-state-error error-text",
 			/* Class applied to the tabs panel container when content has been loaded */
 			contentLoaded: "content-loaded",
 			/* Class applied to the JSFiddle button */
@@ -118,13 +120,16 @@
 					self._render();
 				})
 				.fail(function() {
-					console.log("fail");
+					self.element.append(self._errorHtml(self.locale.errorContent));
+					self.$loader.fadeOut();
 				});
 		},
 		_render: function () {
 			var html = "", self = this;
-			if (!this.options.repo || !this.options.owner) {
-				
+			if (!this.options.repo || !this.options.owner || !this.options.ref || !this.options.embed.length) {
+				this.element.append(this._errorHtml(self.locale.errorInit));
+				this.$loader.fadeOut();
+				return;
 			}
 			html += this._fiddleHtml();
 			html += this._copyHtml();
@@ -179,6 +184,9 @@
 			mainHeader += "</ul>"
 
 			return mainHeader + tabs;
+		},
+		_errorHtml: function (text) {
+			return "<div class='" + this.css.errorText + "'>" + text + "</div>";
 		},
 		_attachEvents: function () {
 			var self = this;
@@ -297,7 +305,7 @@
 					hljs.highlightBlock(code[0]);
 				})
 				.fail(function() {
-					self.activePanel.html("Failed to grab content");
+					self.activePanel.html(self._errorHtml(self.locale.errorContent));
 				})
 				.always(function() {
 					self.activePanel.addClass(self.css.contentLoaded);

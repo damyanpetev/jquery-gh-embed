@@ -18,6 +18,11 @@
     width: 100%;
 }
 
+.ui-widget.ui-ghembed .error-text{
+    position: relative;
+    top: 50%;
+    text-align: center;
+}
 
 .ui-tabs .ui-tabs-panel {
     border: 1px solid #eee;
