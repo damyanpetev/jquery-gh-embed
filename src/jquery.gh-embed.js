@@ -1,5 +1,6 @@
 /*!
  * jQuery UI based embed widget for embedding source files from GitHub.
+ * https://github.com/damyanpetev/jquery-gh-embed
  * 
  * Depends on:
  * jquery.js
