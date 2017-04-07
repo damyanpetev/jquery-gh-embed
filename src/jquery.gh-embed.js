@@ -1,4 +1,4 @@
-/*!@license
+/*!
  * jQuery UI based embed widget for embedding source files from GitHub.
  * 
  * Depends on:
