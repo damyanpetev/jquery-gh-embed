@@ -1,4 +1,5 @@
 $headerHeight: 40px;
+$blue: #09f;
 
 .ui-widget.ui-ghembed.ui-tabs {
     position: relative;
@@ -14,23 +15,23 @@ $headerHeight: 40px;
     .ui-tabs-nav {
         padding: 0;
         box-sizing: border-box;
-    height: $headerHeight;
+        height: $headerHeight;
     }
     .ui-tabs-panel {
         border: 1px solid #eee;
+        border-top: none;
         background: none;
-        height: calc(100% - #{$headerHeight} - 1.1em);
+        height: calc(100% - #{$headerHeight} - 1em);
         padding: 0;
 
         pre {
             margin: 0;
             height: 100%;
-            background: none;
-            border: none;
+            border:none;
+            background: #fff;
+            overflow-y: auto;
         }
         pre code {
-            height: 100%;
-            padding: 0;
             background: none;
         }
         iframe {
@@ -43,7 +44,7 @@ $headerHeight: 40px;
     }
     .ui-tabs-panel:focus {
         outline: none;
-        border-color: #0099ff;
+        border-color: $blue;
     }
 
     // Error messages
@@ -55,28 +56,25 @@ $headerHeight: 40px;
 
     // JSFIddle
     .JSFiddle a {
-        background: url(../images/JSFiddle-img.png) no-repeat 10px center #09f;
+        text-decoration: none;
+        background: url(../images/JSFiddle-img.png) no-repeat 10px center $blue;
         color: #fff;
-        border: none;
         padding: 0 10px 0 50px;
         position: relative;
         float: right;
-        line-height: 40px;
-        font-size: 16px;
+        line-height: $headerHeight;
     }
 
     .JSFiddle a:hover {
-        text-decoration: none;
-        background: url(../images/JSFiddle-img.png) no-repeat 10px center #0083db;
+        background: url(../images/JSFiddle-img.png) no-repeat 10px center darken($blue, 10%); //#0083db;
     }
 
     // Copy
     .codeViewerSelectAll {
         position: absolute;
-        display: inline-block;
         padding: 5px;
-        top: 60;
-        right: 30;
+        top: 60px;
+        right: 30px;
         width: 130px;
         background-color: #e0e0e0;
         border: 1px solid #c0c0c0;
@@ -85,13 +83,11 @@ $headerHeight: 40px;
         text-align: center;
         border-radius: 4px;
         opacity: 0.4;
-        filter: alpha(opacity=40);
         user-select:none;
     }
 
     .codeViewerSelectAll:hover {
         opacity: 1;
-        filter: alpha(opacity=100);
     }
 
     // GitHub source link
@@ -99,6 +95,7 @@ $headerHeight: 40px;
         text-align: right;
     }
     .github-link {
+        font-size: .85em;
         position: relative;
         padding: 0 1em;
         border: none;
