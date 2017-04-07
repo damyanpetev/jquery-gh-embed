@@ -80,7 +80,7 @@
 			/* Class applied to the copy button */
 			copyAllButton: "codeViewerSelectAll"
 		},
-		_ghAPI: "", //"https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}",
+		_ghAPI: "https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}",
 		_ghRawAPI: "https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}",
 		_fiddleUrl: "https://jsfiddle.net/gh/get/jquery/1.9.1/${owner}/${repo}/tree/${ref}/${path}",
 		_createWidget: function () {
@@ -150,7 +150,7 @@
 		},
 		_loaderHtml: function name(hidden) {
 			return "<div class='" + this.css.loaderClass +
-						(hidden? " hidden" : "") + "'></div>";
+						(hidden? " ui-helper-hidden" : "") + "'></div>";
 		},
 		_fiddleHtml: function () {
 			var result = "", 
@@ -235,7 +235,7 @@
 		_getGhFile: function (path) {
 			var self = this,
 				result = $.Deferred();
-			 $.get({
+			 $.ajax({
 				url: this._getUrl(path),
 				headers: {
 					Accept: 'application/vnd.github.VERSION.raw'
@@ -243,7 +243,7 @@
 			})
 			.then(null, function() {
 				 // fail filter, try raw:
-				 return $.get({
+				 return $.ajax({
 					url: self._getUrl(path, "raw"),
 					headers: {
 						Accept: 'application/vnd.github.VERSION.raw'
