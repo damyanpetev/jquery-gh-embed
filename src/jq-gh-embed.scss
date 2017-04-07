@@ -1,0 +1,125 @@
+$headerHeight: 40px;
+
+.ui-widget.ui-ghembed.ui-tabs {
+    position: relative;
+    box-sizing: border-box;
+    padding: 0;
+    padding-bottom: 1em;
+    border: none;
+    width: 100%;
+}
+
+.ui-widget.ui-ghembed {
+    //Tabs layout
+    .ui-tabs-nav {
+        padding: 0;
+        box-sizing: border-box;
+    height: $headerHeight;
+    }
+    .ui-tabs-panel {
+        border: 1px solid #eee;
+        background: none;
+        height: calc(100% - #{$headerHeight} - 1.1em);
+        padding: 0;
+
+        pre {
+            margin: 0;
+            height: 100%;
+            background: none;
+            border: none;
+        }
+        pre code {
+            height: 100%;
+            padding: 0;
+            background: none;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            margin: 0;
+            border: none;
+        }
+    }
+    .ui-tabs-panel:focus {
+        outline: none;
+        border-color: #0099ff;
+    }
+
+    // Error messages
+    .error-text{
+        position: relative;
+        top: 50%;
+        text-align: center;
+    }
+
+    // JSFIddle
+    .JSFiddle a {
+        background: url(../images/JSFiddle-img.png) no-repeat 10px center #09f;
+        color: #fff;
+        border: none;
+        padding: 0 10px 0 50px;
+        position: relative;
+        float: right;
+        line-height: 40px;
+        font-size: 16px;
+    }
+
+    .JSFiddle a:hover {
+        text-decoration: none;
+        background: url(../images/JSFiddle-img.png) no-repeat 10px center #0083db;
+    }
+
+    // Copy
+    .codeViewerSelectAll {
+        position: absolute;
+        display: inline-block;
+        padding: 5px;
+        top: 60;
+        right: 30;
+        width: 130px;
+        background-color: #e0e0e0;
+        border: 1px solid #c0c0c0;
+        color: #707070;
+        cursor: pointer;
+        text-align: center;
+        border-radius: 4px;
+        opacity: 0.4;
+        filter: alpha(opacity=40);
+        user-select:none;
+    }
+
+    .codeViewerSelectAll:hover {
+        opacity: 1;
+        filter: alpha(opacity=100);
+    }
+
+    // GitHub source link
+    .github-link-container {
+        text-align: right;
+    }
+    .github-link {
+        position: relative;
+        padding: 0 1em;
+        border: none;
+        width: 100%;
+    }
+
+    // Loader
+    .loader {
+        position: absolute;
+        top: calc(50% - 1em);
+        left: calc(50% - 1em);
+        border: .3em solid #f5f5f5;
+        border-top: .3em solid #0099ff;
+        border-radius: 50%;
+        width: 2em;
+        height: 2em;
+        animation: spin 1.5s ease-out infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+}
