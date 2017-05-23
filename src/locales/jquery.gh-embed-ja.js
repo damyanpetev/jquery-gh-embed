@@ -7,7 +7,7 @@
 
 		$.extend($.ui.ghEmbed.prototype.locale, {
 			fiddle: "JsFiddle で表示",
-			gitHubLink: "で表示 GitHub",
+			gitHubLink: "GitHub で表示",
 			copyAll: "クリップボードへコピー",
 			errorInit:  "エラーが発生しました。",
 			errorContent: "データを取得するときにエラーが発生しました。"
