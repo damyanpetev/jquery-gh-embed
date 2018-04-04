@@ -178,7 +178,7 @@
 
 			for (var i = 0; i < this.options.embed.length; i++) {
 				tab = this.options.embed[i];
-				tabId = tab.label || "tab-" + (i+1);
+				tabId = "tab-" + (i+1);
 				mainHeader += "<li><a href='#" + tabId + "'>" + tab.label + "</a></li>";
 				tabs += "<div id='" + tabId + "' tabindex='0'></div>";
 			}
@@ -284,7 +284,6 @@
 				
 			}
 			url = url.replace("${path}", path);
-			console.log(url);
 			return url;
 		},
 		_loadTabContent: function (tab) {
