@@ -174,13 +174,13 @@
 			return "<span class='" + this.css.copyAllButton + "'>" + text + "</span>";
 		},
 		_createTabs: function () {
-			var tab, tabId, mainHeader = "<ul>", tabs = "";
+			var tab, mainHeader = "<ul>", tabs = "";
 
 			for (var i = 0; i < this.options.embed.length; i++) {
 				tab = this.options.embed[i];
-				tabId = "tab-" + (i+1);
-				mainHeader += "<li><a href='#" + tabId + "'>" + tab.label + "</a></li>";
-				tabs += "<div id='" + tabId + "' tabindex='0'></div>";
+				tab._id = "tab-" + (i+1);
+				mainHeader += "<li><a href='#" + tab._id + "'>" + tab.label + "</a></li>";
+				tabs += "<div id='" + tab._id + "' tabindex='0'></div>";
 			}
 			mainHeader += "</ul>"
 
@@ -320,7 +320,7 @@
 				return;
 			}
 			this.element.tabs("option", "active", index);
-			this.activePanel = this.element.find("#" + tab.label);
+			this.activePanel = this.element.find("#" + tab._id);
 
 			if (!this.activePanel.hasClass(this.css.contentLoaded)) {
 				this._loadTabContent(tab);
